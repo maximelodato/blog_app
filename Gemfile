@@ -69,3 +69,4 @@ end
 
 gem 'faker'
 gem 'devise'
+gem 'ruby-vips'

@@ -1,0 +1,2 @@
+<%= turbo_stream.append "articles", partial: "articles/article", locals: { article: @article } %>
+<%= turbo_stream.replace "flash", partial: "shared/flash" %>

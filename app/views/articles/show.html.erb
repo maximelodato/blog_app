@@ -2,9 +2,44 @@
 
 <%= render @article %>
 
-<div>
-  <%= link_to "Edit this article", edit_article_path(@article) %> |
-  <%= link_to "Back to articles", articles_path %>
+<h1><%= @article.title %></h1>
+<p><%= @article.content %></p>
 
-  <%= button_to "Destroy this article", @article, method: :delete %>
-</div>
+<h2>Photo</h2>
+<% if @photo&.image&.attached? %>
+  <%= image_tag @photo.image, class: "img-fluid" %>
+<% else %>
+  <p>Aucune image disponible.</p>
+<% end %>
+
+<% if user_signed_in? && current_user == @article.user %>
+  <div class="mt-4">
+    <%= link_to 'Éditer', edit_article_path(@article), class: "btn btn-warning" %>
+    <%= button_to 'Supprimer', @article, method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cet article ?' }, class: "btn btn-danger" %>
+  </div>
+<% end %>
+
+<h3>Commentaires</h3>
+<% @article.comments.each do |comment| %>
+  <p>
+    <strong><%= comment.user.email %> :</strong>
+    <%= comment.content %>
+    <% if comment.user == current_user %>
+      <%= link_to 'Éditer', edit_article_comment_path(@article, comment), class: "btn btn-sm btn-link" %>
+      <%= link_to 'Supprimer', article_comment_path(@article, comment), method: :delete, data: { confirm: 'Êtes-vous sûr ?' }, class: "btn btn-sm btn-link text-danger" %>
+    <% end %>
+  </p>
+<% end %>
+
+<h4>Ajouter un commentaire</h4>
+<% if user_signed_in? %>
+  <%= form_with(model: [@article, Comment.new], local: true) do |form| %>
+    <div class="form-group">
+      <%= form.label :content %>
+      <%= form.text_area :content, class: "form-control" %>
+    </div>
+    <%= form.submit "Publier", class: "btn btn-primary mt-2" %>
+  <% end %>
+<% else %>
+  <p>Veuillez vous connecter pour ajouter un commentaire.</p>
+<% end %>

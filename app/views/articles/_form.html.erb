@@ -1,27 +1,38 @@
-<%= form_with(model: article) do |form| %>
-  <% if article.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(article.errors.count, "error") %> prohibited this article from being saved:</h2>
+<!-- app/views/articles/_form.html.erb -->
 
+<%= form_with(model: @article, local: true) do |f| %>
+  <% if @article.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(@article.errors.count, "erreur") %> empêchent cet article d'être enregistré :</h2>
       <ul>
-        <% article.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% @article.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
+  <div class="form-group">
+    <%= f.label :title, "Titre" %>
+    <%= f.text_field :title, class: "form-control" %>
   </div>
 
-  <div>
-    <%= form.label :content, style: "display: block" %>
-    <%= form.text_area :content %>
+  <div class="form-group">
+    <%= f.label :content, "Contenu" %>
+    <%= f.text_area :content, class: "form-control" %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="form-check">
+    <%= f.check_box :private, class: "form-check-input" %>
+    <%= f.label :private, "Privé", class: "form-check-label" %>
   </div>
+
+  <%= f.fields_for :photo do |photo_form| %>
+    <div class="form-group">
+      <%= photo_form.label :image, "Ajouter une image" %>
+      <%= photo_form.file_field :image, class: "form-control" %>
+    </div>
+  <% end %>
+
+  <%= f.submit "Enregistrer", class: "btn btn-primary mt-3" %>
 <% end %>

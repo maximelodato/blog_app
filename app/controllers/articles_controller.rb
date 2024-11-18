@@ -1,35 +1,47 @@
 class ArticlesController < ApplicationController
   before_action :correct_user, only: [:edit, :update, :destroy]
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_article, only: %i[ show edit update destroy ]
+  before_action :set_article, only: [:show, :edit, :update, :destroy]
 
   # GET /articles or /articles.json
   def index
-    @articles = Article.all
+    if user_signed_in?
+      @articles = Article.where("private = ? OR user_id = ?", false, current_user.id)
+    else
+      @articles = Article.where(private: false)
+    end
   end
 
   # GET /articles/1 or /articles/1.json
   def show
+    @article = Article.find(params[:id])
+    @photo = @article.photo
   end
 
   # GET /articles/new
   def new
-    @article = Article.new
+    @article = current_user.articles.build
+    @article.build_photo # Prépare l'association pour le formulaire
   end
 
   # GET /articles/1/edit
   def edit
+    @article.build_photo unless @article.photo
   end
 
   # POST /articles or /articles.json
   def create
     @article = current_user.articles.build(article_params)
     if @article.save
-      redirect_to @article, notice: "Article créé avec succès."
+      flash[:notice] = "Article créé avec succès."
+      redirect_to @article
     else
-      render :new
+      flash.now[:alert] = "Erreur lors de la création de l'article. Veuillez vérifier vos entrées."
+      render :new, status: :unprocessable_entity
     end
   end
+  
+  
 
   # PATCH/PUT /articles/1 or /articles/1.json
   def update
@@ -67,6 +79,7 @@ class ArticlesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def article_params
-      params.require(:article).permit(:title, :content)
+      params.require(:article).permit(:title, :content, :private, photo_attributes: [:image])
+
     end
 end

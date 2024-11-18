@@ -1,0 +1,9 @@
+<h1>Photo</h1>
+<% if @photo.image.attached? %>
+  <%= image_tag @photo.image, class: "img-fluid" %>
+<% else %>
+  <p>Aucune image disponible.</p>
+<% end %>
+
+<%= link_to 'Éditer', edit_photo_path(@photo) %> |
+<%= link_to 'Retour', photos_path %>

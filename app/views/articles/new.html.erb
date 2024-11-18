@@ -1,9 +1,47 @@
-<h1>New article</h1>
+<h1>Créer un nouvel article</h1>
 
-<%= render "form", article: @article %>
+<%= form_with(model: @article, local: true) do |f| %>
+  <% if @article.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@article.errors.count, "erreur") %> empêchent cet article d'être enregistré :</h2>
+      <ul>
+        <% @article.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-<br>
+  <div>
+    <%= f.label :title %>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+
+  <div>
+    <%= f.label :content %>
+    <%= f.text_area :content, class: "form-control" %>
+  </div>
+
+  <div>
+    <%= f.label :private, "Privé ?" %>
+    <%= f.check_box :private %>
+  </div>
+
+  <%= f.fields_for :photo do |photo_form| %>
+    <div>
+      <%= photo_form.label :image, "Ajouter une image" %>
+      <%= photo_form.file_field :image, class: "form-control" %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.submit "Créer l'article", class: "btn btn-primary mt-3" %>
+  </div>
+<% end %>
+
 
 <div>
   <%= link_to "Back to articles", articles_path %>
 </div>
+
+

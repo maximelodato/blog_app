@@ -1,0 +1,13 @@
+<!-- app/views/comments/edit.html.erb -->
+
+<h1>Éditer le commentaire</h1>
+
+<%= form_with(model: [@article, @comment], local: true) do |form| %>
+  <div class="form-group">
+    <%= form.label :content, "Contenu du commentaire" %>
+    <%= form.text_area :content, class: "form-control" %>
+  </div>
+  <%= form.submit "Mettre à jour", class: "btn btn-primary" %>
+<% end %>
+
+<%= link_to 'Retour à l\'article', @article, class: "btn btn-secondary mt-2" %>
