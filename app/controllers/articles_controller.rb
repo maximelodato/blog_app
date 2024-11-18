@@ -7,8 +7,9 @@ class ArticlesController < ApplicationController
   def index
     if user_signed_in?
       @articles = Article.where("private = ? OR user_id = ?", false, current_user.id)
+                         .order(created_at: :desc) # Les articles les plus récents en premier
     else
-      @articles = Article.where(private: false)
+      @articles = Article.where(private: false).order(created_at: :desc)
     end
   end
 
